@@ -286,12 +286,29 @@ def build_raw_csv_and_metadata():
 
     for item in moderator_logs:
         mask = df["tweet"] == item["text"]
+
+        label_idx = item["decision_index"]
+        col = label_column[label_idx]
+
         if not mask.any():
+            new_row = {
+                "count": 1,
+                "hate_speech": 0,
+                "offensive_language": 0,
+                "neither": 0,
+                "class": label_idx,
+                "tweet": item["text"],
+                "created_at": datetime.datetime.now().timestamp(),
+            }
+
+            # set predicted label column to 1
+            new_row[col] = 1
+
+            df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+
             continue
 
         idx = mask.idxmax()
-        label_idx = item["decision_index"]
-        col = label_column[label_idx]
 
         df.at[idx, col] += 1
         df.at[idx, "count"] += 1

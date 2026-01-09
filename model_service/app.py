@@ -112,7 +112,7 @@ class ModelUsageResource(MethodView):
     @public_blp.arguments(TextSchema)
     @public_blp.response(200)
     def post(self, text_json):
-        """Register a new table"""
+        """Use model"""
         responce = requests.post(f"{PREPROCESSING_URL}/speed", json = text_json)
         if not responce.ok:
             logging.error(f"Responce from preprocesing service is {responce.status_code}")
